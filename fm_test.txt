@@ -1,0 +1,11 @@
+abide	/word_fm_audio_pack/tapescript_audio_2_5710.m4a
+abundance	/word_fm_audio_pack/tapescript_audio_2_3495.m4a
+accommodate	/word_fm_audio_pack/tapescript_audio_2_638.m4a
+accord	/word_fm_audio_pack/tapescript_audio_2_1049.m4a
+accordance	/word_fm_audio_pack/tapescript_audio_2_6518.m4a
+accusation	/word_fm_audio_pack/tapescript_audio_2_10558.m4a
+activate	/word_fm_audio_pack/tapescript_audio_2_3497.m4a
+additional	/word_fm_audio_pack/tapescript_audio_2_2609.m4a
+adhere	/word_fm_audio_pack/tapescript_audio_2_3499.m4a
+adjacent	/word_fm_audio_pack/tapescript_audio_2_3510.m4a
+adjustable	/word_fm_audio_pack/tapescript_audio_2_6491.m4a
