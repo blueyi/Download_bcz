@@ -92,23 +92,26 @@ bool geturl(const std::string &infile, std::vector< std::pair<std::string, std::
         return false;
     }
     else {
-        std::string line;
+        std::string line, previous_word;
         while (getline(instream, line)) {
             if (line.length() < line_length)
                 continue;
             std::string word, sub_url;
             word = line.substr(0, line.find("/") - 1);
+            if (word == previous_word)
+                continue;
             sub_url = line.substr(line.find("/"));
             if (word.empty() || sub_url.empty())
                 continue;
             sub_url = fixed_url + sub_url;
+            //std::cout << "****sub_url: " << sub_url << std::endl;
             words_url.push_back(std::make_pair(word, sub_url));
+            previous_word = word;
         }
     }
     instream.close();
     return true;
 }
-
 
 bool down(const std::string dir, const std::vector< std::pair<std::string, std::string> > &words_url, std::vector< std::pair<std::string, std::string> > &failed_words)
 {
@@ -123,7 +126,8 @@ bool down(const std::string dir, const std::vector< std::pair<std::string, std::
         tword = word_url.first;
         turl = word_url.second;
         suffix = turl.substr(turl.find_last_of("."));
-        down_command = down_command + turl + " -O " + "\"./" + dir + "/" + tword + "_" + subname + suffix + "\"";
+        down_command = down_command + "\"" + turl + "\"" + " -O " + "\"./" + dir + "/" + tword + "_" + subname + suffix + "\"";
+        std::cout << "****down_command: " << down_command << std::endl;
         if (system(down_command.c_str()) != 0) {
             failed_words.push_back(word_url);
             is_all_good = false;
