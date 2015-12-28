@@ -22,10 +22,10 @@ std::string fixed_url = "http://baicizhan.qiniucdn.com";
 std::string subname;
 
 //read word and resource url from infile to vector
-bool geturl(const std::string &infile, std::map<std::string, std::pair<std::string, std::string> > &words_url);
+bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std::string, std::string> > &words_url);
 
 //use wget to download url of words_url to directory dir
-bool down(const std::string dir, const std::map<std::string, std::pair<std::string, std::string> > &words_url, std::map<std::string, std::pair<std::string, std::string> > &failed_words);
+bool down(const std::string dir, const std::multimap<std::string, std::pair<std::string, std::string> > &words_url, std::multimap<std::string, std::pair<std::string, std::string> > &failed_words);
 
 void show_progress(int cur, int total)
 {
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
     else {
-        std::map<std::string, std::pair<std::string, std::string> > words_url, failed_words;
+        std::multimap<std::string, std::pair<std::string, std::string> > words_url, failed_words;
         int file_num_start = 1;
         std::string temp1 = argv[1];
         if (temp1 == "-f") {
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     return 0;
 }
 
-bool geturl(const std::string &infile, std::map<std::string, std::pair<std::string, std::string> > &words_url)
+bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std::string, std::string> > &words_url)
 {
     std::ifstream instream(infile.c_str());
     if (!instream) {
@@ -100,10 +100,15 @@ bool geturl(const std::string &infile, std::map<std::string, std::pair<std::stri
             word = line.substr(0, line.find("\t"));
             if (line.find("\t") == line.find_last_of("\t"))
                 sentence = "";
-            else
-                sentence = line.substr(line.find("\t") + 1, line.find_last_of("\t"));
+            else {
+                if (line.find(".") < line.find_last_of("\t"))
+                    sentence = line.substr(line.find("\t") + 1, line.find(".") - line.find("\t") - 1);
+                else
+                    sentence = line.substr(line.find("\t") + 1, line.find_last_of("\t") - line.find("\t") - 1);
+            }
             sub_url = line.substr(line.find_last_of("\t") + 1);
-            std::cout << "***word:" << word << "***sentence:" << sentence << "***sub_url:" << sub_url << std::endl;
+            //std::cout << "***word:" << word << "***sentence:" << sentence << "***sub_url:" << sub_url << std::endl;
+            //std::cout << "***" << sentence << "***" << std::endl;
             if (sub_url == previous_url)
                 continue;
             previous_url = sub_url;
@@ -118,7 +123,7 @@ bool geturl(const std::string &infile, std::map<std::string, std::pair<std::stri
     return true;
 }
 
-bool down(const std::string dir, const std::map<std::string, std::pair<std::string, std::string> > &words_url, std::map<std::string, std::pair<std::string, std::string> > &failed_words)
+bool down(const std::string dir, const std::multimap<std::string, std::pair<std::string, std::string> > &words_url, std::multimap<std::string, std::pair<std::string, std::string> > &failed_words)
 {
     bool is_all_good = true;
     int cur = 0;
@@ -132,8 +137,11 @@ bool down(const std::string dir, const std::map<std::string, std::pair<std::stri
         tsentence = word_url.second.first;
         turl = word_url.second.second;
         suffix = turl.substr(turl.find_last_of("."));
-        down_command = down_command + "\"" + turl + "\"" + " -O " + "\"./" + dir + "/" + tword + "_" + subname + suffix + "\"";
-        std::cout << "****down_command: " << down_command << std::endl;
+        if (tsentence.empty())
+            down_command = down_command + "\"" + turl + "\"" + " -O " + "\"./" + dir + "/" + tword + "_" + subname + suffix + "\"";
+        else
+            down_command = down_command + "\"" + turl + "\"" + " -O " + "\"./" + dir + "/" + tword + "_" + tsentence + "_" + subname + suffix + "\"";
+        //std::cout << "****down_command: " << down_command << std::endl;
         if (system(down_command.c_str()) != 0) {
             failed_words.insert(word_url);
             is_all_good = false;

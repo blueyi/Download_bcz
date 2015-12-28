@@ -1,0 +1,12 @@
+abandoned	The abandoned house looks so terrifying.	/sentence_audios_dat/f_20150606_085527_1_2.dat
+abandoned	The abandoned house looks so terrifying.	/sentence_audios_dat/f_20150606_085527_1_2.dat
+abandoned	The abandoned building was spooky and full of debris.	/sentence_audios_dat/example_2_32647_1359437098.dat
+abandoned	The abandoned mule is branded.	/sentence_audios_dat/WordSentence_2_34921.dat
+abandoned	The abandoned building was spooky and full of debris.	/sentence_audios_dat/example_2_32647_1359437098.dat
+abbey	The abbey was the largest building on the island. 	/sentence_audios_dat/example_2_11196_1332517301.dat
+abdomen	Eating too much can make your abdomen fat.	/sentence_audios_dat/example_2_11197_1332517365.dat
+abdomen	Eating too much can make your abdomen fat.	/sentence_audios_dat/example_2_11197_1332517365.dat
+abdominal	Debby is doing abdominal exercises. 	/sentence_audios_dat/example_2_11198_1332517420.dat
+aberrant	John's smile was described as aberrant	/sentence_audios_dat/example_2_11199_1332517532.dat
+aberrant	John's smile was described as aberrant	/sentence_audios_dat/example_2_11199_1332517532.dat
+abet	It's fun to abet diet people take some desserts.	/sentence_audios_dat/1423913110259.dat
