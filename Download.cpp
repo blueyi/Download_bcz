@@ -22,10 +22,10 @@ std::string fixed_url = "http://baicizhan.qiniucdn.com";
 std::string subname;
 
 //read word and resource url from infile to vector
-bool geturl(const std::string &infile, std::vector< std::pair<std::string, std::string> > &words_url);
+bool geturl(const std::string &infile, std::map<std::string, std::pair<std::string, std::string> > &words_url);
 
 //use wget to download url of words_url to directory dir
-bool down(const std::string dir, const std::vector< std::pair<std::string, std::string> > &words_url, std::vector< std::pair<std::string, std::string> > &failed_words);
+bool down(const std::string dir, const std::map<std::string, std::pair<std::string, std::string> > &words_url, std::map<std::string, std::pair<std::string, std::string> > &failed_words);
 
 void show_progress(int cur, int total)
 {
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
     else {
-        std::vector< std::pair<std::string, std::string> > words_url, failed_words;
+        std::map<std::string, std::pair<std::string, std::string> > words_url, failed_words;
         int file_num_start = 1;
         std::string temp1 = argv[1];
         if (temp1 == "-f") {
@@ -74,8 +74,8 @@ int main(int argc, char **argv)
                 std::cout << "The following words can't to download " << std::endl;
                 std::ofstream outwords("Error_words.txt", std::ofstream::out | std::ofstream::app);
                 for (const auto &fword : failed_words) {
-                    std::cout << fword.first << ": " << fword.second << std::endl;
-                    outwords << fword.first << "  " << fword.second << std::endl;
+                    std::cout << fword.first << ": " << fword.second.first << " " << fword.second.second << std::endl;
+                    outwords << fword.first << "\t" << fword.second.first << "\t" << fword.second.second << std::endl;
                 }
                 outwords.close();
             }
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     return 0;
 }
 
-bool geturl(const std::string &infile, std::vector< std::pair<std::string, std::string> > &words_url)
+bool geturl(const std::string &infile, std::map<std::string, std::pair<std::string, std::string> > &words_url)
 {
     std::ifstream instream(infile.c_str());
     if (!instream) {
@@ -92,28 +92,33 @@ bool geturl(const std::string &infile, std::vector< std::pair<std::string, std::
         return false;
     }
     else {
-        std::string line, previous_word;
+        std::string line, previous_url;
         while (getline(instream, line)) {
             if (line.length() < line_length)
                 continue;
-            std::string word, sub_url;
-            word = line.substr(0, line.find("/") - 1);
-            if (word == previous_word)
+            std::string word, sentence, sub_url;
+            word = line.substr(0, line.find("\t"));
+            if (line.find("\t") == line.find_last_of("\t"))
+                sentence = "";
+            else
+                sentence = line.substr(line.find("\t") + 1, line.find_last_of("\t"));
+            sub_url = line.substr(line.find_last_of("\t") + 1);
+            std::cout << "***word:" << word << "***sentence:" << sentence << "***sub_url:" << sub_url << std::endl;
+            if (sub_url == previous_url)
                 continue;
-            sub_url = line.substr(line.find("/"));
+            previous_url = sub_url;
             if (word.empty() || sub_url.empty())
                 continue;
             sub_url = fixed_url + sub_url;
             //std::cout << "****sub_url: " << sub_url << std::endl;
-            words_url.push_back(std::make_pair(word, sub_url));
-            previous_word = word;
+            words_url.insert(std::make_pair(word, std::make_pair(sentence, sub_url)));
         }
     }
     instream.close();
     return true;
 }
 
-bool down(const std::string dir, const std::vector< std::pair<std::string, std::string> > &words_url, std::vector< std::pair<std::string, std::string> > &failed_words)
+bool down(const std::string dir, const std::map<std::string, std::pair<std::string, std::string> > &words_url, std::map<std::string, std::pair<std::string, std::string> > &failed_words)
 {
     bool is_all_good = true;
     int cur = 0;
@@ -122,14 +127,15 @@ bool down(const std::string dir, const std::vector< std::pair<std::string, std::
         cur++;
         show_progress(cur, total_words);
         std::string down_command = "wget -c ";
-        std::string tword, turl, suffix;
+        std::string tword, tsentence, turl, suffix;
         tword = word_url.first;
-        turl = word_url.second;
+        tsentence = word_url.second.first;
+        turl = word_url.second.second;
         suffix = turl.substr(turl.find_last_of("."));
         down_command = down_command + "\"" + turl + "\"" + " -O " + "\"./" + dir + "/" + tword + "_" + subname + suffix + "\"";
         std::cout << "****down_command: " << down_command << std::endl;
         if (system(down_command.c_str()) != 0) {
-            failed_words.push_back(word_url);
+            failed_words.insert(word_url);
             is_all_good = false;
         }
     }

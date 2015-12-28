@@ -7,3 +7,8 @@ do away with	/word_audios_dat/do away with.dat
 hang on	/word_audios_dat/hang on.dat
 keep off	/word_audios_dat/keep off.dat
 keep off	/word_audios_dat/keep off.dat
+abandoned	/sentence_audios_dat/f_20150606_085527_1_2.dat
+abandoned	/sentence_audios_dat/f_20150606_085527_1_2.dat
+abandoned	/sentence_audios_dat/example_2_32647_1359437098.dat
+abandoned	/sentence_audios_dat/WordSentence_2_34921.dat
+abandoned	/sentence_audios_dat/example_2_32647_1359437098.dat
