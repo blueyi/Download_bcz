@@ -30,7 +30,7 @@ int main(int argc, char **argv)
         for (int i = 1; i < argc; ++i) {
             geturl(argv[i], words_url);
             std::string dir = argv[i];
-            if (dir.find(".") != std::npos)
+            if (dir.find(".") != std::string::npos)
                 dir = dir.substr(0, dir.find("."));
             //std::cout << "dir = " << dir << std::endl;
         }
@@ -39,7 +39,7 @@ int main(int argc, char **argv)
     return 0;
 }
 
-bool geturl(const std::string &infile, const std::vector< std::map<std::string, std::string> > &words_url)
+bool geturl(const std::string &infile, std::vector< std::map<std::string, std::string> > &words_url)
 {
     std::ifstream instream(infile.c_str());
     if (!instream) {
@@ -54,7 +54,8 @@ bool geturl(const std::string &infile, const std::vector< std::map<std::string, 
             isstream >> word >> sub_url;
             if (word.empty() || sub_url.empty())
                 continue;
-            std::map
+            std::map<std::string, std::string> word_map(word, sub_url);
+            words_url.push_back(word_map);
 
         }
     }
