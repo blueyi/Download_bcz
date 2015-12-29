@@ -108,7 +108,9 @@ bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std:
             if (line.find("\t") == line.find_last_of("\t"))
                 sentence = "";
             else {
-                if (line.find(".") < line.find_last_of("\t"))
+                if (line.find(".\t") == line.find_last_of("\t") - 1)
+                    sentence = line.substr(line.find("\t") + 1, line.find_last_of("\t") - line.find("\t") - 1);
+                else if (line.find(".") < line.find_last_of("\t"))
                     sentence = line.substr(line.find("\t") + 1, line.find(".") - line.find("\t") - 1);
                 else
                     sentence = line.substr(line.find("\t") + 1, line.find_last_of("\t") - line.find("\t") - 1);
