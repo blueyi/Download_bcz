@@ -70,12 +70,14 @@ int main(int argc, char **argv)
             subname = dir.substr(0, dir.find("_"));
             if(system(dir_command.c_str()) != 0)
                 std::cout << "Directory: " << dir << " created error!" << std::endl;
+
             bool is_down_ok = down(dir, words_url, failed_words, argv[i]);
             if (is_down_ok)
                 std::cout << "All of words download success and stored in \n" << "***" << dir << "***" << std::endl;
             else {
                 std::cout << "The following words can't to download " << std::endl;
-                std::ofstream outwords("Error_words.txt", std::ofstream::out | std::ofstream::app);
+                std::string error_fname = "Error_" + dir + ".txt";
+                std::ofstream outwords(error_fname.c_str(), std::ofstream::out | std::ofstream::app);
                 for (const auto &fword : failed_words) {
                     std::cout << fword.first << ": " << fword.second.first << " " << fword.second.second << std::endl;
                     outwords << fword.first << "\t" << fword.second.first << "\t" << fword.second.second << std::endl;

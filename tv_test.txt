@@ -12,4 +12,4 @@ adjustable	/word_tv/real_adjustable.mp4
 admiration	/word_tv/noun_admiration.mp4
 adolescent	/word_tv/real_adolescent.mp4
 adore	/word_tv/music_adore.mp4
-advent	
+advent	/word_tv/advent.mp4
