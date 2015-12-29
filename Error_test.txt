@@ -1,0 +1,6 @@
+Mr.	Mr. Smith is a stylish man.	/cropped_images/14035_20130608_03_18_32_655.jpg	http://baicizhan.qiniucdn.com/cropped_images/14035_20130608_03_18_32_655.jpg
+yeah	_Are you happy?_ _YEAH, I AM!_	http://baicizhan.qiniucdn.com/cropped_images/20120507_04_07_58_919.jpg
+Mr.	Mr. Smith is a stylish man.	_cropped_images_14035_20130608_03_18_32_655.jpg	http://baicizhan.qiniucdn.com/cropped_images/14035_20130608_03_18_32_655.jpg
+abbey	The abbey was the largest building on the island. 	_sentence_audios_dat_example_2_11196_1332517301.dat	http://baicizhan.qiniucdn.com/sentence_audios_dat/example_2_11196_1332517301.dat
+yeah	_Are you happy__ _YEAH, I AM!_	_cropped_images_20120507_04_07_58_919.jpg	http://baicizhan.qiniucdn.com/cropped_images/20120507_04_07_58_919.jpg
+yeah	_Are you happy__ _YEAH, I AM!_	_cropped_images_20120507_04_07_58_919.jpg	http://baicizhan.qiniucdn.com/cropped_images/20120507_04_07_58_919.jpg

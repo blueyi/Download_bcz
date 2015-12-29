@@ -52,7 +52,7 @@ abandoned	The abandoned house looks so terrifying.	/sentence_audios_dat/f_201506
 abandoned	The abandoned building was spooky and full of debris.	/sentence_audios_dat/example_2_32647_1359437098.dat
 ```
 then you will get downloaded file name like this:`abandoned_The abandoned house looks so terrifying_fm.dat`    
-3.If you need a subname of your download file name, you need rename your text file name to end with `_sometheing`, then the file name your downloaded will end with `_sometheing`.   
+3.If you need a subname of your download file name, you need rename your text file name to end with `sometheing_`, then the file name your downloaded will start with `xxx_sometheing.xxx`.   
 4.Pass an arrgument `-d` to download directly, command is `Download.exe -d file1.txt file2.txt`, your text file maybe like this:  
 >direct_down_test.txt
 

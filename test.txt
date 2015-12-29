@@ -3,3 +3,6 @@ abbey	The abbey was the largest building on the island. 	/sentence_audios_dat/e
 windmill	/word_audios_dat/windmill.dat
 mister	/word_audios_dat/mister.dat
 mister	/word_audios_dat/mister.dat
+yeah	"Are you happy?" "YEAH, I AM!"	/cropped_images/20120507_04_07_58_919.jpg
+Mr.	Mr. Smith is a stylish man.	/cropped_images/14035_20130608_03_18_32_655.jpg
+
