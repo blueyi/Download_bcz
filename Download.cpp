@@ -25,14 +25,15 @@ std::string subname;
 bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std::string, std::string> > &words_url);
 
 //use wget to download url of words_url to directory dir
-bool down(const std::string dir, const std::multimap<std::string, std::pair<std::string, std::string> > &words_url, std::multimap<std::string, std::pair<std::string, std::string> > &failed_words);
+bool down(const std::string dir, const std::multimap<std::string, std::pair<std::string, std::string> > &words_url, std::multimap<std::string, std::pair<std::string, std::string> > &failed_words, std::string cur_file);
 
-void show_progress(int cur, int total)
+void show_progress(int cur, int total, std::string cur_file)
 {
     double rate = static_cast<double>(cur) / static_cast<double>(total);
     int num_equal = rate * total_bar;
+    std::cout << "***Downloading " << cur_file << "***" << std::endl;
     std::string progress(num_equal, '+');
-    std::cout << progress << "=>" << cur << "/" << total << std::endl;
+    std::cout << "Total:[" << progress << "=>" << cur << "/" << total << "]" << std::endl;
 }
 
 int main(int argc, char **argv)
@@ -45,6 +46,7 @@ int main(int argc, char **argv)
         std::multimap<std::string, std::pair<std::string, std::string> > words_url, failed_words;
         int file_num_start = 1;
         std::string temp1 = argv[1];
+
         if (temp1 == "-f") {
             std::string http_temp = argv[2];
             if (http_temp.substr(0, 6) != "http://") {
@@ -54,7 +56,9 @@ int main(int argc, char **argv)
             fixed_url = http_temp;
             file_num_start = 3;
         }
+
         for (int i = file_num_start; i < argc; ++i) {
+            words_url.clear();
             if (!geturl(argv[i], words_url)) {
                 std::cout << "get url failure from file: " << argv[i] << std::endl;
                 continue;
@@ -66,8 +70,7 @@ int main(int argc, char **argv)
             subname = dir.substr(0, dir.find("_"));
             if(system(dir_command.c_str()) != 0)
                 std::cout << "Directory: " << dir << " created error!" << std::endl;
-            std::cout << "***Downloading " << argv[i] << " ***" << std::endl;
-            bool is_down_ok = down(dir, words_url, failed_words);
+            bool is_down_ok = down(dir, words_url, failed_words, argv[i]);
             if (is_down_ok)
                 std::cout << "All of words download success and stored in \n" << "***" << dir << "***" << std::endl;
             else {
@@ -98,6 +101,8 @@ bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std:
                 continue;
             std::string word, sentence, sub_url;
             word = line.substr(0, line.find("\t"));
+            if (word.find("/") != std::string::npos) 
+                word.replace(word.find("/"), 1, "_");
             if (line.find("\t") == line.find_last_of("\t"))
                 sentence = "";
             else {
@@ -123,14 +128,13 @@ bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std:
     return true;
 }
 
-bool down(const std::string dir, const std::multimap<std::string, std::pair<std::string, std::string> > &words_url, std::multimap<std::string, std::pair<std::string, std::string> > &failed_words)
+bool down(const std::string dir, const std::multimap<std::string, std::pair<std::string, std::string> > &words_url, std::multimap<std::string, std::pair<std::string, std::string> > &failed_words, std::string cur_file)
 {
     bool is_all_good = true;
     int cur = 0;
     int total_words = words_url.size();
     for (const auto &word_url : words_url) {
         cur++;
-        show_progress(cur, total_words);
         std::string down_command = "wget -c ";
         std::string tword, tsentence, turl, suffix;
         tword = word_url.first;
@@ -142,6 +146,9 @@ bool down(const std::string dir, const std::multimap<std::string, std::pair<std:
         else
             down_command = down_command + "\"" + turl + "\"" + " -O " + "\"./" + dir + "/" + tword + "_" + tsentence + "_" + subname + suffix + "\"";
         //std::cout << "****down_command: " << down_command << std::endl;
+        if (cur < total_words)
+            system("cls");
+        show_progress(cur, total_words, cur_file);
         if (system(down_command.c_str()) != 0) {
             failed_words.insert(word_url);
             is_all_good = false;

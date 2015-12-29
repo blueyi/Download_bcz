@@ -3,6 +3,7 @@ abandoned	The abandoned house looks so terrifying.	/sentence_audios_dat/f_201506
 abandoned	The abandoned building was spooky and full of debris.	/sentence_audios_dat/example_2_32647_1359437098.dat
 abandoned	The abandoned mule is branded.	/sentence_audios_dat/WordSentence_2_34921.dat
 abandoned	The abandoned building was spooky and full of debris.	/sentence_audios_dat/example_2_32647_1359437098.dat
+be/get burnt out	/word_audios_dat/be_get burnt out.dat
 abbey	The abbey was the largest building on the island. 	/sentence_audios_dat/example_2_11196_1332517301.dat
 abdomen	Eating too much can make your abdomen fat.	/sentence_audios_dat/example_2_11197_1332517365.dat
 abdomen	Eating too much can make your abdomen fat.	/sentence_audios_dat/example_2_11197_1332517365.dat

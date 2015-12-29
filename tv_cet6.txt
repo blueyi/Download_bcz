@@ -1,4 +1,3 @@
-topic_word	tv_path
 abide	
 abundance	
 accommodate	/word_tv/news_play_video_1937.mp4
