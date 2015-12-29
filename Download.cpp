@@ -17,6 +17,7 @@
 
 const std::string::size_type line_length = 5;
 const int total_bar = 80;
+const std::vector<char> exclude_char{'*', '\?', '\"', '\\', '/', '|', ':', '<', '>'};
 
 std::string fixed_url = "http://baicizhan.qiniucdn.com";
 std::string subname;
@@ -26,6 +27,16 @@ bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std:
 
 //use wget to download url of words_url to directory dir
 bool down(const std::string dir, const std::multimap<std::string, std::pair<std::string, std::string> > &words_url, std::multimap<std::string, std::pair<std::string, std::string> > &failed_words, std::string cur_file);
+
+std::string& replace_ex(std::string &str, const std::vector<char> &exclude = exclude_char)
+{
+    for (const auto &ex : exclude) {
+        while (str.find(ex) != std::string::npos) {
+            str.replace(str.find(ex), 1, "_");
+        }
+    }
+    return str;
+}
 
 void show_progress(int cur, int total, std::string cur_file)
 {
@@ -113,19 +124,21 @@ bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std:
                 continue;
             std::string word, sentence, sub_url;
             word = line.substr(0, line.find("\t"));
-            if (word.find("/") != std::string::npos) 
-                word.replace(word.find("/"), 1, "_");
-            if (line.find("\t") == line.find_last_of("\t"))
+            replace_ex(word);
+
+            if (line.find("\t") == line.rfind("\t"))
                 sentence = "";
             else {
-                if (line.find(".\t") == line.find_last_of("\t") - 1)
-                    sentence = line.substr(line.find("\t") + 1, line.find_last_of("\t") - line.find("\t") - 1);
-                else if (line.find(".") < line.find_last_of("\t"))
-                    sentence = line.substr(line.find("\t") + 1, line.find(".") - line.find("\t") - 1);
+                if (line.find(".\t") == line.rfind("\t") - 1)
+                    sentence = line.substr(line.find("\t") + 1, line.rfind("\t") - line.find("\t") - 1);
+                else if (line.rfind(".", line.size() - 6) != std::string::npos && line.find("\t") < line.rfind(".", line.size() - 6))
+                    sentence = line.substr(line.find("\t") + 1, line.rfind(".", line.size() - 6) - line.find("\t") - 1);
                 else
-                    sentence = line.substr(line.find("\t") + 1, line.find_last_of("\t") - line.find("\t") - 1);
+                    sentence = line.substr(line.find("\t") + 1, line.rfind("\t") - line.find("\t") - 1);
             }
-            sub_url = line.substr(line.find_last_of("\t") + 1);
+
+            replace_ex(sentence);
+            sub_url = line.substr(line.rfind("\t") + 1);
             //std::cout << "***word:" << word << "***sentence:" << sentence << "***sub_url:" << sub_url << std::endl;
             //std::cout << "***" << sentence << "***" << std::endl;
             if (sub_url == previous_url)
@@ -154,15 +167,15 @@ bool down(const std::string dir, const std::multimap<std::string, std::pair<std:
         tword = word_url.first;
         tsentence = word_url.second.first;
         turl = word_url.second.second;
-        suffix = turl.substr(turl.find_last_of("."));
+        suffix = turl.substr(turl.rfind("."));
         if (tsentence.empty())
             file_name = tword + "_" + subname + suffix;
         else
             file_name = tword + "_" + tsentence  + "_" + subname + suffix;
         down_command = down_command + "\"" + turl + "\"" + " -O " + "\"./" + dir + "/" + file_name + "\"";
         //std::cout << "****down_command: " << down_command << std::endl;
-        if (cur < total_words)
-            system("cls");
+//        if (cur < total_words)
+//            system("cls");
         show_progress(cur, total_words, cur_file);
         if (system(down_command.c_str()) != 0) {
             failed_words.insert(word_url);
