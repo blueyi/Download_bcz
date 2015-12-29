@@ -21,6 +21,7 @@ const std::vector<char> exclude_char{'*', '\?', '\"', '\\', '/', '|', ':', '<', 
 
 std::string fixed_url = "http://baicizhan.qiniucdn.com";
 std::string subname;
+int rfind_offset = 6;
 
 //read word and resource url from infile to vector
 bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std::string, std::string> > &words_url);
@@ -126,13 +127,18 @@ bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std:
             word = line.substr(0, line.find("\t"));
             replace_ex(word);
 
+            if (line.find("http://") != std::string::npos)
+                rfind_offset = line.size() - line.find("http://");
+            else
+                rfind_offset = 6;
+
             if (line.find("\t") == line.rfind("\t"))
                 sentence = "";
             else {
                 if (line.find(".\t") == line.rfind("\t") - 1)
                     sentence = line.substr(line.find("\t") + 1, line.rfind("\t") - line.find("\t") - 1);
-                else if (line.rfind(".", line.size() - 6) != std::string::npos && line.find("\t") < line.rfind(".", line.size() - 6))
-                    sentence = line.substr(line.find("\t") + 1, line.rfind(".", line.size() - 6) - line.find("\t") - 1);
+                else if (line.rfind(".", line.size() - rfind_offset) != std::string::npos && line.find("\t") < line.rfind(".", line.size() - rfind_offset))
+                    sentence = line.substr(line.find("\t") + 1, line.rfind(".", line.size() - rfind_offset) - line.find("\t") - 1);
                 else
                     sentence = line.substr(line.find("\t") + 1, line.rfind("\t") - line.find("\t") - 1);
             }
@@ -146,7 +152,8 @@ bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std:
             previous_url = sub_url;
             if (word.empty() || sub_url.empty())
                 continue;
-            sub_url = fixed_url + sub_url;
+            if (sub_url.find("http://") == std::string::npos)
+                sub_url = fixed_url + sub_url;
             //std::cout << "****sub_url: " << sub_url << std::endl;
             words_url.insert(std::make_pair(word, std::make_pair(sentence, sub_url)));
         }
