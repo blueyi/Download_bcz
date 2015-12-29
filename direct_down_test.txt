@@ -1,0 +1,8 @@
+Antarctic	http://baicizhan.qiniucdn.com/word_tv/real_antarctic.mp4
+Catholic	http://baicizhan.qiniucdn.com/word_tv/real_catholic.mp4
+Easter	http://baicizhan.qiniucdn.com/word_tv/animate_easter.mp4
+Egyptian	http://baicizhan.qiniucdn.com/word_tv/real_egyptian.mp4
+Orthodox	http://baicizhan.qiniucdn.com/word_tv/real_orthodox.mp4
+Turkey	http://baicizhan.qiniucdn.com/word_tv/animate_turkey.mp4
+abandon	http://baicizhan.qiniucdn.com/word_tv/leng_abandon.mp4
+abnormal	http://baicizhan.qiniucdn.com/word_tv/real_abnormal.mp4

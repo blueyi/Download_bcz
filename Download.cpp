@@ -56,6 +56,10 @@ int main(int argc, char **argv)
             fixed_url = http_temp;
             file_num_start = 3;
         }
+        else if (temp1 == "-d") {
+            fixed_url.clear();
+            file_num_start = 2;
+        }
 
         for (int i = file_num_start; i < argc; ++i) {
             words_url.clear();
@@ -79,8 +83,14 @@ int main(int argc, char **argv)
                 std::string error_fname = "Error_" + dir + ".txt";
                 std::ofstream outwords(error_fname.c_str(), std::ofstream::out | std::ofstream::app);
                 for (const auto &fword : failed_words) {
-                    std::cout << fword.first << ": " << fword.second.first << " " << fword.second.second << std::endl;
-                    outwords << fword.first << "\t" << fword.second.first << "\t" << fword.second.second << std::endl;
+                    if (fword.second.first.empty()) {
+                        std::cout << fword.first << ": " << fword.second.second << std::endl;
+                        outwords << fword.first << "\t" << fword.second.second << std::endl;
+                    }
+                    else {
+                        std::cout << fword.first << ": " << fword.second.first << " " << fword.second.second << std::endl;
+                        outwords << fword.first << "\t" << fword.second.first << "\t" << fword.second.second << std::endl;
+                    }
                 }
                 outwords.close();
             }
@@ -140,15 +150,16 @@ bool down(const std::string dir, const std::multimap<std::string, std::pair<std:
     for (const auto &word_url : words_url) {
         cur++;
         std::string down_command = "wget -c ";
-        std::string tword, tsentence, turl, suffix;
+        std::string tword, tsentence, turl, suffix, file_name;
         tword = word_url.first;
         tsentence = word_url.second.first;
         turl = word_url.second.second;
         suffix = turl.substr(turl.find_last_of("."));
         if (tsentence.empty())
-            down_command = down_command + "\"" + turl + "\"" + " -O " + "\"./" + dir + "/" + tword + "_" + subname + suffix + "\"";
+            file_name = tword + "_" + subname + suffix;
         else
-            down_command = down_command + "\"" + turl + "\"" + " -O " + "\"./" + dir + "/" + tword + "_" + tsentence + "_" + subname + suffix + "\"";
+            file_name = tword + "_" + tsentence  + "_" + subname + suffix;
+        down_command = down_command + "\"" + turl + "\"" + " -O " + "\"./" + dir + "/" + file_name + "\"";
         //std::cout << "****down_command: " << down_command << std::endl;
         if (cur < total_words)
             system("cls");
@@ -156,6 +167,9 @@ bool down(const std::string dir, const std::multimap<std::string, std::pair<std:
         if (system(down_command.c_str()) != 0) {
             failed_words.insert(word_url);
             is_all_good = false;
+            std::string del_failed_file = "del ";
+            del_failed_file = del_failed_file + "\".\\" + dir + "\\" + file_name + "\"";
+            system(del_failed_file.c_str());
         }
     }
     return is_all_good;
