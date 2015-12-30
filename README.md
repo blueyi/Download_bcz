@@ -1,5 +1,7 @@
-# Download.exe is a batch download program based on wget, get_tv_url.exe used to obtain unduplicated direct http url.    
-# Main feature: This program will download all resource file from an text file on the basis of what pattern of url line the text file contain.This program only used to technical communication, so don't used in any illegal field.  
+# About   
+Download.exe is a batch download program based on wget, get_tv_url.exe used to obtain unduplicated direct http url.    
+# Main feature  
+This program will download all resource file from an text file on the basis of what pattern of url line the text file contain.This program only used to technical communication, so don't used in any illegal field.    
 
 # How to use it  
 1.Get the file name and url you want to download, and store them in an text file, one per row.eg:  

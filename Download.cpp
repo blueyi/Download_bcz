@@ -43,9 +43,9 @@ void show_progress(int cur, int total, std::string cur_file)
 {
     double rate = static_cast<double>(cur) / static_cast<double>(total);
     int num_equal = rate * total_bar;
-    std::cout << "***Downloading " << cur_file << "***" << std::endl;
+    std::cout << "***Downloading " << cur_file << "***" << std::endl << std::endl;
     std::string progress(num_equal, '+');
-    std::cout << "Total:[" << progress << "=>" << cur << "/" << total << "]" << std::endl;
+    std::cout << "Total:[" << progress << "=>" << cur << "/" << total << "]" << std::endl << std::endl;
 }
 
 int main(int argc, char **argv)
@@ -91,7 +91,8 @@ int main(int argc, char **argv)
             if (is_down_ok)
                 std::cout << "All of words download success and stored in \n" << "***" << dir << "***" << std::endl;
             else {
-                std::cout << "The following words can't to download " << std::endl;
+                std::cout << std::endl;
+                std::cout << "***The following words downloaded failed!***" << std::endl;
                 std::string error_fname = "Error_" + dir + ".txt";
                 std::ofstream outwords(error_fname.c_str(), std::ofstream::out | std::ofstream::app);
                 for (const auto &fword : failed_words) {
