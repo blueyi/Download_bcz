@@ -181,8 +181,8 @@ bool down(const std::string dir, const std::multimap<std::string, std::pair<std:
             file_name = tword + "_" + tsentence  + "_" + subname + suffix;
         down_command = down_command + "\"" + turl + "\"" + " -O " + "\"./" + dir + "/" + file_name + "\"";
         //std::cout << "****down_command: " << down_command << std::endl;
-//        if (cur < total_words)
-//            system("cls");
+        if (cur < total_words)
+            system("cls");
         show_progress(cur, total_words, cur_file);
         if (system(down_command.c_str()) != 0) {
             failed_words.insert(word_url);
