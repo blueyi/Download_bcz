@@ -22,6 +22,8 @@ const std::vector<char> exclude_char{'*', '\?', '\"', '\\', '/', '|', ':', '<', 
 std::string fixed_url = "http://baicizhan.qiniucdn.com";
 std::string subname;
 int rfind_offset = 6;
+bool is_auto_shutdown = false;
+const std::string shutdown_command = "shutdown -s -t 60";
 
 //read word and resource url from infile to vector
 bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std::string, std::string> > &words_url);
@@ -57,7 +59,14 @@ int main(int argc, char **argv)
     else {
         std::multimap<std::string, std::pair<std::string, std::string> > words_url, failed_words;
         int file_num_start = 1;
+        int file_num_end = argc;
         std::string temp1 = argv[1];
+        //auto shutdown your PC when download complete
+        std::string shutdown = argv[argc - 1];
+        if (shutdown == "-S") {
+            is_auto_shutdown = true;
+            file_num_end--;
+        }
 
         if (temp1 == "-f") {
             std::string http_temp = argv[2];
@@ -73,7 +82,8 @@ int main(int argc, char **argv)
             file_num_start = 2;
         }
 
-        for (int i = file_num_start; i < argc; ++i) {
+
+        for (int i = file_num_start; i < file_num_end; ++i) {
             words_url.clear();
             if (!geturl(argv[i], words_url)) {
                 std::cout << "get url failure from file: " << argv[i] << std::endl;
@@ -106,6 +116,21 @@ int main(int argc, char **argv)
                     }
                 }
                 outwords.close();
+            }
+        }
+        if (is_auto_shutdown) {
+            std::cout << std::endl;
+            std::cout << "Download complete!" << std::endl;
+            std::cout << "Auto shutdown will be executed after 60 seconds!" << std::endl;
+            std::cout << "Input \"N/n\" to cancle auto shutdown" << std::endl;
+            system(shutdown_command.c_str());
+            char ch;
+            while (std::cin >> ch) {
+                if (ch == 'N' || ch == 'n') {
+                    std::cout << "Auto shutdown will be aborted!" << std::endl;
+                    system("shutdown -a");
+                    break;
+                }
             }
         }
     }
@@ -185,6 +210,8 @@ bool down(const std::string dir, const std::multimap<std::string, std::pair<std:
         if (cur < total_words)
             system("cls");
         show_progress(cur, total_words, cur_file);
+        if (is_auto_shutdown)
+            std::cout << "***Auto Shutdown***" << std::endl << std::endl;
         if (system(down_command.c_str()) != 0) {
             failed_words.insert(word_url);
             is_all_good = false;
