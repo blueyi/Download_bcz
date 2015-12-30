@@ -170,7 +170,7 @@ bool down(const std::string dir, const std::multimap<std::string, std::pair<std:
     int total_words = words_url.size();
     for (const auto &word_url : words_url) {
         cur++;
-        std::string down_command = "wget -c ";
+        std::string down_command = "wget -c -T 120 ";
         std::string tword, tsentence, turl, suffix, file_name;
         tword = word_url.first;
         tsentence = word_url.second.first;

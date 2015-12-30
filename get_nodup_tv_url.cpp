@@ -1,7 +1,7 @@
 /*
  * Download.cpp
  * Copyright (C) 2015  <@BLUEYI-PC>
- * batch download resource file from text file
+ * get url from multiple file and eliminate duplicate url, then store in Nodup_tv.txt
  * Distributed under terms of the MIT license.
  */
 
@@ -36,7 +36,7 @@ void show_progress(int cur, int total, std::string cur_file)
 int main(int argc, char **argv)
 {
     std::map<std::string, std::pair<std::string, std::string> > words_url, failed_words;
-    std::string total_tv = "Total_tv.txt";
+    std::string total_tv = "Nodup_tv.txt";
 
     if (!geturl(total_tv, words_url)) {
         std::cout << "get url failure from file: " << total_tv << std::endl;
