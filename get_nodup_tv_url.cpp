@@ -97,7 +97,8 @@ bool geturl(const std::string &infile, std::map<std::string, std::pair<std::stri
             previous_url = sub_url;
             if (word.empty() || sub_url.empty())
                 continue;
-            sub_url = fixed_url + sub_url;
+            if (sub_url.find("http://") == std::string::npos)
+                sub_url = fixed_url + sub_url;
             //std::cout << "****sub_url: " << sub_url << std::endl;
             words_url.insert(std::make_pair(word, std::make_pair(sentence, sub_url)));
         }
