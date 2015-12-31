@@ -1,7 +1,7 @@
 /*
  * Download.cpp
  * Copyright (C) 2015  <@BLUEYI-PC>
- * predict url from text file and store them in Try_tv.txt
+  * predict url from text file but exclude the exclude_list's word and store them in Try_tv.txt
  * you need pass two argument, first is total word list, second is you need to exclude, but the second is optional
  * Distributed under terms of the MIT license.
  */
@@ -14,6 +14,8 @@
 #include <fstream>
 #include <sstream>
 #include <utility>
+#include <cctype>
+#include <algorithm>
 
 const std::string::size_type line_length = 5;
 const int total_bar = 80;
@@ -124,7 +126,7 @@ bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std:
             }
 
             replace_ex(sentence);
-            if (line.find("\t"))
+            if (line.find("\t") != std::string::npos)
               sub_url = line.substr(line.rfind("\t") + 1);
             //std::cout << "***word:" << word << "***sentence:" << sentence << "***sub_url:" << sub_url << std::endl;
             //std::cout << "***" << sentence << "***" << std::endl;
@@ -133,16 +135,18 @@ bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std:
             previous_url = sub_url;
             if (word.empty())
               continue;
+            std::string lower_word = word;
+            transform(lower_word.begin(), lower_word.end(), lower_word.begin(), ::tolower);
             if (sub_url.empty() && exclude_list.find(word) == exclude_list.end()) {
                 for (const auto &str : try_str) {
-                    sub_url = fixed_url + "/word_tv/" + str + "_" + word + ".mp4";
+                    sub_url = fixed_url + "/word_tv/" + str + "_" + lower_word + ".mp4";
                     words_url.insert(std::make_pair(word, std::make_pair(sentence, sub_url)));
                 }
-                sub_url = fixed_url + "/word_tv/" + word + ".mp4";
+                sub_url = fixed_url + "/word_tv/" + lower_word + ".mp4";
                 words_url.insert(std::make_pair(word, std::make_pair(sentence, sub_url)));
             }
             else {
-                if (sub_url.find("http://") == std::string::npos)
+                if (sub_url.find("http://") != std::string::npos)
                   sub_url = fixed_url + sub_url;
                 //std::cout << "****sub_url: " << sub_url << std::endl;
                 if (exclude_list.find(word) == exclude_list.end())
