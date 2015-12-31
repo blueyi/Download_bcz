@@ -31,6 +31,7 @@ bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std:
 //use wget to download url of words_url to directory dir
 bool down(const std::string dir, const std::multimap<std::string, std::pair<std::string, std::string> > &words_url, std::multimap<std::string, std::pair<std::string, std::string> > &failed_words, std::string cur_file);
 
+//replace some character belongs to exclude_char
 std::string& replace_ex(std::string &str, const std::vector<char> &exclude = exclude_char)
 {
     for (const auto &ex : exclude) {
@@ -41,6 +42,7 @@ std::string& replace_ex(std::string &str, const std::vector<char> &exclude = exc
     return str;
 }
 
+//show download progress bar
 void show_progress(int cur, int total, std::string cur_file)
 {
     double rate = static_cast<double>(cur) / static_cast<double>(total);
@@ -91,12 +93,16 @@ int main(int argc, char **argv)
             }
             std::string dir = argv[i];
             if (dir.find(".") != std::string::npos)
-                dir = dir.substr(0, dir.find("."));
+                dir = dir.substr(0, dir.find(".") - 0);
             std::string dir_command = "md " + dir;
-            subname = dir.substr(0, dir.find("_"));
+            if (dir.find("_") != std::string::npos)
+                subname = dir.substr(0, dir.find("_") - 0);
+            else
+                subname = dir;
             if(system(dir_command.c_str()) != 0)
                 std::cout << "Directory: " << dir << " created error!" << std::endl;
 
+            //output the list of failed download
             bool is_down_ok = down(dir, words_url, failed_words, argv[i]);
             if (is_down_ok)
                 std::cout << "All of words download success and stored in \n" << "***" << dir << "***" << std::endl;
@@ -118,6 +124,7 @@ int main(int argc, char **argv)
                 outwords.close();
             }
         }
+        //auto shutdown computer after download complete
         if (is_auto_shutdown) {
             std::cout << std::endl;
             std::cout << "Download complete!" << std::endl;
@@ -147,17 +154,17 @@ bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std:
     else {
         std::string line, previous_url;
         while (getline(instream, line)) {
-            if (line.length() < line_length)
+            if (line.find_first_not_of(" ") != std::string::npos)
+                line = line.substr(line.find_first_not_of(" "));
+            if (line.length() < line_length || line.find("/") == std::string::npos)
                 continue;
             std::string word, sentence, sub_url;
-            word = line.substr(0, line.find("\t"));
-            replace_ex(word);
 
+            //ascertain sentence and 
             if (line.find("http://") != std::string::npos)
                 rfind_offset = line.size() - line.find("http://");
             else
                 rfind_offset = 6;
-
             if (line.find("\t") == line.rfind("\t"))
                 sentence = "";
             else {
@@ -168,9 +175,22 @@ bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std:
                 else
                     sentence = line.substr(line.find("\t") + 1, line.rfind("\t") - line.find("\t") - 1);
             }
-
             replace_ex(sentence);
-            sub_url = line.substr(line.rfind("\t") + 1);
+
+            if (line.find("\t") != std::string::npos)
+                sub_url = line.substr(line.rfind("\t") + 1);
+
+            //ascertain file name and download url
+            if (line.find("\t") != std::string::npos)
+                word = line.substr(0, line.find("\t") - 0);
+            else if (line.find("http://") == 0) {
+                if (line.find(".") != std::string::npos)
+                    word = line.substr(line.rfind("/") + 1, line.rfind(".") - line.rfind("/") - 1);
+                else
+                    word = line.substr(line.rfind("/") + 1);
+                sub_url = line;
+            }
+            replace_ex(word);
             //std::cout << "***word:" << word << "***sentence:" << sentence << "***sub_url:" << sub_url << std::endl;
             //std::cout << "***" << sentence << "***" << std::endl;
             if (sub_url == previous_url)
@@ -200,7 +220,10 @@ bool down(const std::string dir, const std::multimap<std::string, std::pair<std:
         tword = word_url.first;
         tsentence = word_url.second.first;
         turl = word_url.second.second;
-        suffix = turl.substr(turl.rfind("."));
+        if (turl.find(".") != std::string::npos)
+            suffix = turl.substr(turl.rfind("."));
+        else
+            suffix = turl.substr(turl.rfind("/"));
         if (tsentence.empty())
             file_name = tword + "_" + subname + suffix;
         else

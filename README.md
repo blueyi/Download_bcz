@@ -128,10 +128,20 @@ Earth Hour	Do you want to take part in “Earth Hour this time around?	http://ba
 
 7.If you want to auto shutdown your computer when download completed, you need pass `-S` at the end of your command line, eg:`Download.exe file1.txt file2.txt -S`. If you need cancle the pre-set of auto shutdown, you should input `n/N` according to the promote.
 
+8.If you like,you can store your url in text file like this:  
+>test.txt
+
+```
+abbey	The abbey was the largest building on the island. 	http://baicizhan.qiniucdn.com/sentence_audios_dat/example_2_11196_1332517301.dat
+windmill	/word_audios_dat/windmill.dat
+http://baicizhan.qiniucdn.com/word_tv/real_egyptian.mp4
+Mr.	Mr. Smith is a stylish man.	/cropped_images/14035_20130608_03_18_32_655.jpg
+```
+Just run command `Download1.1.exe test.txt`, everything will work well(only supported in version 1.1).  
 
 ## Feature  
 * **Store file to the directory named of their text file name**
-* **Support phrase**
+* **Support phrase to specify file name**
 * **Support recovery broken download**
 * **Rename the name of download file based on text file name**
 * **Show total download progress bar**
@@ -141,6 +151,7 @@ Earth Hour	Do you want to take part in “Earth Hour this time around?	http://ba
 * **Auto jum over the url of duplicate**
 * **Support pass multiple text file which comtain specified pattern url**
 * **Auto shutdown your pc when download completed**
+* **Support mixed url file to download**
 
 ## To-Do  
 * auto scan some resource to download
