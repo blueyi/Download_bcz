@@ -1,5 +1,6 @@
 ## About   
-`Download.exe` is a batch download program based on wget, `get_nodup_word_tv_url.exe` used to obtain unduplicated direct http url,`get_try_tv_url_ex_word.exe` can used to predict bcz's tv url. `get_url_ex_url.exe` to get unduplicated url from more than one text file. `get_nodup_word_list.exe` to get unduplicated word from more than one text file.  
+`Download.exe` is a batch download program based on wget, `get_nodup_word_tv_url.exe` used to obtain unduplicated direct http url,`get_try_tv_url_ex_word.exe` can used to predict bcz's tv url. `get_url_ex_url.exe` to get unduplicated url from more than one text file. `get_nodup_word_list.exe` to get unduplicated word from more than one text file.`Rename.exe` used to rename downloaded file to original file name.
+
 ## Main feature  
 This program will download all resource file from an text file on the basis of what pattern of url line the text file contain.This program only used to technical communication, so don't used in any illegal field.    
 
@@ -110,6 +111,8 @@ accord	http://baicizhan.qiniucdn.com/word_tv/real_accord.mp4
 ```
 
 6.Run command line `get_nodup_word_list.exe words_list.txt` to get the unduplicated words `from word_list.txt` and store them in `nodup_words.txt`.  
+
+7.Run command line `Rename.exe words_url.txt` in your download directory.
 
 ## There are some advance feature maybe you need   
 1.Pass a fixed url arrgument followed `-f` to revise your url, default fixed url is `http://baicizhan.qiniucdn.com`, eg:`Download.exe -f http://example.com/test file1.txt file2.txt`  

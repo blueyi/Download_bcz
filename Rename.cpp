@@ -1,7 +1,7 @@
 /*
  * Download.cpp
  * Copyright (C) 2015  <@BLUEYI-PC>
- * batch download resource file from text file
+ * rename downloaded file to original file name
  * Distributed under terms of the MIT license.
  */
 
@@ -18,19 +18,16 @@
 const std::string::size_type line_length = 5;
 const int total_bar = 80;
 const std::vector<char> exclude_char{'*', '\?', '\"', '\\', '/', '|', ':', '<', '>'};
-
 std::string fixed_url = "http://baicizhan.qiniucdn.com";
-std::string subname;
+
 int rfind_offset = 6;
-bool is_auto_shutdown = false;
-bool no_rename = false;
-const std::string shutdown_command = "shutdown -s -t 60";
+bool is_rename_ok = false;
+const std::string subname = "tv";
 
 //read word and resource url from infile to vector
 bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std::string, std::string> > &words_url);
 
-//use wget to download url of words_url to directory dir
-bool down(const std::string dir, const std::multimap<std::string, std::pair<std::string, std::string> > &words_url, std::multimap<std::string, std::pair<std::string, std::string> > &failed_words, std::string cur_file);
+bool rename(const std::multimap<std::string, std::pair<std::string, std::string> > &words_url, std::multimap<std::string, std::pair<std::string, std::string> > &failed_words, std::multimap<std::string, std::pair<std::string, std::string> > &keep_words);
 
 //replace some character belongs to exclude_char
 std::string& replace_ex(std::string &str, const std::vector<char> &exclude = exclude_char)
@@ -43,15 +40,6 @@ std::string& replace_ex(std::string &str, const std::vector<char> &exclude = exc
     return str;
 }
 
-//show download progress bar
-void show_progress(int cur, int total, std::string cur_file)
-{
-    double rate = static_cast<double>(cur) / static_cast<double>(total);
-    int num_equal = rate * total_bar;
-    std::cout << "***Downloading " << cur_file << "***" << std::endl << std::endl;
-    std::string progress(num_equal, '+');
-    std::cout << "Total:[" << progress << "=>" << cur << "/" << total << "]" << std::endl << std::endl;
-}
 
 int main(int argc, char **argv)
 {
@@ -60,76 +48,24 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
     else {
-        std::multimap<std::string, std::pair<std::string, std::string> > words_url, failed_words;
+        std::multimap<std::string, std::pair<std::string, std::string> > words_url, failed_words, keeped_words;
         int file_num_start = 1;
         int file_num_end = argc;
-        std::string temp1, option_str;
-        int option_num;
         for (int i = file_num_start; i < file_num_end; ++i) {
-            temp1 = argv[i];
-            if (temp1.find("-") != std::string::npos) {
-                option_str = temp1;
-                option_num = i;
-            }
-        }
-
-        if (!option_str.empty()) {
-            char ch;
-            std::istringstream ins(option_str);
-            std::string http_temp = argv[option_num + 1];
-            while (ins >> ch) {
-                std::cout << "**" << ch << "**" << std::endl;
-                switch (ch) {
-                    case 'f' :
-                        if (http_temp.substr(0, 6) != "http://") {
-                            std::cout << "There must be an correct url following of \'-f\'" << std::endl;
-                            exit(EXIT_FAILURE);
-                        }
-                        fixed_url = http_temp;
-                        break;
-                    case 'd' :
-                        fixed_url.clear();
-                        file_num_start = 2;
-                        break;
-                    case 'S' :
-                        is_auto_shutdown = true;
-                        break;
-                    case 'n' :
-                        no_rename = true;
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-        for (int i = file_num_start; i < file_num_end; ++i) {
-            if (i == option_num)
-                continue;
             words_url.clear();
             if (!geturl(argv[i], words_url)) {
                 std::cout << "get url failure from file: " << argv[i] << std::endl;
                 continue;
             }
-            std::string dir = argv[i];
-            if (dir.find(".") != std::string::npos)
-              dir = dir.substr(0, dir.find(".") - 0);
-            std::string dir_command = "md " + dir;
-            if (dir.find("_") != std::string::npos)
-              subname = dir.substr(0, dir.find("_") - 0);
-            else
-              subname = dir;
-            if(system(dir_command.c_str()) != 0)
-              std::cout << "Directory: " << dir << " created error!" << std::endl;
-
+            
             //output the list of failed download
-            bool is_down_ok = down(dir, words_url, failed_words, argv[i]);
-            if (is_down_ok)
-              std::cout << "All of words download success and stored in \n" << "***" << dir << "***" << std::endl;
+            bool is_rename_ok = rename(words_url, failed_words, keeped_words);
+            if (is_rename_ok)
+              std::cout << "All of words rename success" << std::endl; 
             else {
                 std::cout << std::endl;
-                std::cout << "***The following words downloaded failed!***" << std::endl;
-                std::string error_fname = "Error_" + dir + ".txt";
+                std::cout << "***The following words rename failed!***" << std::endl;
+                std::string error_fname = "Error_rename.txt";
                 std::ofstream outwords(error_fname.c_str(), std::ofstream::out | std::ofstream::app);
                 for (const auto &fword : failed_words) {
                     if (fword.second.first.empty()) {
@@ -143,22 +79,22 @@ int main(int argc, char **argv)
                 }
                 outwords.close();
             }
-        }
-        //auto shutdown computer after download complete
-        if (is_auto_shutdown) {
+
+            std::string keep_fname = "keeped_name.txt";
+            std::ofstream outwords(keep_fname.c_str(), std::ofstream::out | std::ofstream::app);
             std::cout << std::endl;
-            std::cout << "Download complete!" << std::endl;
-            std::cout << "Auto shutdown will be executed after 60 seconds!" << std::endl;
-            std::cout << "Input \"N/n\" to cancle auto shutdown" << std::endl;
-            system(shutdown_command.c_str());
-            char ch;
-            while (std::cin >> ch) {
-                if (ch == 'N' || ch == 'n') {
-                    std::cout << "Auto shutdown will be aborted!" << std::endl;
-                    system("shutdown -a");
-                    break;
+            std::cout << "***The following words name keeped!***" << std::endl;
+            for (const auto &fword : keeped_words) {
+                if (fword.second.first.empty()) {
+                    std::cout << fword.first << ": " << fword.second.second << std::endl;
+                    outwords << fword.first << "\t" << fword.second.second << std::endl;
+                }
+                else {
+                    std::cout << fword.first << ": " << fword.second.first << " " << fword.second.second << std::endl;
+                    outwords << fword.first << "\t" << fword.second.first << "\t" << fword.second.second << std::endl;
                 }
             }
+            outwords.close();
         }
     }
     return 0;
@@ -228,15 +164,13 @@ bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std:
     return true;
 }
 
-bool down(const std::string dir, const std::multimap<std::string, std::pair<std::string, std::string> > &words_url, std::multimap<std::string, std::pair<std::string, std::string> > &failed_words, std::string cur_file)
+bool rename(const std::multimap<std::string, std::pair<std::string, std::string> > &words_url, std::multimap<std::string, std::pair<std::string, std::string> > &failed_words, std::multimap<std::string, std::pair<std::string, std::string> > &keep_words)
 {
+    int success_num = 0;
     bool is_all_good = true;
-    int cur = 0;
-    int total_words = words_url.size();
     for (const auto &word_url : words_url) {
-        cur++;
-        std::string down_command = "wget -c -T 120 ";
-        std::string tword, tsentence, turl, suffix, file_name;
+        std::string rename_command = "ren ";
+        std::string tword, tsentence, turl, suffix, origin_file_name, new_file_name;
         tword = word_url.first;
         tsentence = word_url.second.first;
         turl = word_url.second.second;
@@ -244,28 +178,29 @@ bool down(const std::string dir, const std::multimap<std::string, std::pair<std:
           suffix = turl.substr(turl.rfind(".") + 1);
         else
           suffix = "";
+
         if (tsentence.empty())
-          file_name = tword + "_" + subname + "." + suffix;
+          origin_file_name = tword + "_" + subname + "." + suffix;
         else
-          file_name = tword + "_" + tsentence  + "_" + subname + suffix;
-        if (no_rename)
-            down_command = down_command + "\"" + turl + "\"" + " -P " + "\"./" + dir + "\"";
-        else
-            down_command = down_command + "\"" + turl + "\"" + " -O " + "\"./" + dir + "/" + file_name + "\"";
-        //std::cout << "****down_command: " << down_command << std::endl;
-        if (cur < total_words)
-          system("cls");
-        show_progress(cur, total_words, cur_file);
-        if (is_auto_shutdown)
-          std::cout << "***Auto Shutdown***" << std::endl << std::endl;
-        if (system(down_command.c_str()) != 0) {
+          origin_file_name = tword + "_" + tsentence  + "_" + subname + "." + suffix;
+
+        new_file_name = turl.substr(turl.rfind("/") + 1);
+
+        rename_command = rename_command + "\"" + origin_file_name + "\" \"" + new_file_name + "\"";
+        std::cout << "****rename_command: " << rename_command << std::endl;
+        if (new_file_name.find(tword) == std::string::npos) {
+            keep_words.insert(word_url);
+            continue;
+        }
+
+        if (system(rename_command.c_str()) != 0) {
             failed_words.insert(word_url);
             is_all_good = false;
-            std::string del_failed_file = "del ";
-            del_failed_file = del_failed_file + "\".\\" + dir + "\\" + file_name + "\"";
-            system(del_failed_file.c_str());
         }
+        else
+          success_num++;
     }
+    std::cout << "****rename number: " << success_num << std::endl;
     return is_all_good;
 }
 
