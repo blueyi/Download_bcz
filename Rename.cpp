@@ -187,7 +187,7 @@ bool rename(const std::multimap<std::string, std::pair<std::string, std::string>
         new_file_name = turl.substr(turl.rfind("/") + 1);
 
         rename_command = rename_command + "\"" + origin_file_name + "\" \"" + new_file_name + "\"";
-        std::cout << "****rename_command: " << rename_command << std::endl;
+        //std::cout << "****rename_command: " << rename_command << std::endl;
         if (new_file_name.find(tword) == std::string::npos) {
             keep_words.insert(word_url);
             continue;
