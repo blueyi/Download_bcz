@@ -14,6 +14,8 @@
 #include <fstream>
 #include <sstream>
 #include <utility>
+#include <algorithm>
+#include <cctype>
 
 const std::string::size_type line_length = 5;
 const int total_bar = 80;
@@ -187,13 +189,16 @@ bool rename(const std::multimap<std::string, std::pair<std::string, std::string>
         new_file_name = turl.substr(turl.rfind("/") + 1);
 
         rename_command = rename_command + "\"" + origin_file_name + "\" \"" + new_file_name + "\"";
-        //std::cout << "****rename_command: " << rename_command << std::endl;
-        if (new_file_name.find(tword) == std::string::npos) {
+
+        std::string lower_word = tword;
+        transform(lower_word.begin(), lower_word.end(), lower_word.begin(), ::tolower);
+        if (new_file_name.find(lower_word) == std::string::npos) {
             keep_words.insert(word_url);
             continue;
         }
 
         if (system(rename_command.c_str()) != 0) {
+            std::cout << "****failed command: " << rename_command << std::endl;
             failed_words.insert(word_url);
             is_all_good = false;
         }
