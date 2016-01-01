@@ -1,7 +1,7 @@
 /*
  * Download.cpp
  * Copyright (C) 2015  <@BLUEYI-PC>
- * get url from multiple file and eliminate duplicate url, then store in Nodup_tv.txt
+ * get url from multiple file and eliminate duplicate words, then store in Nodup_tv.txt
  * Distributed under terms of the MIT license.
  */
 

@@ -1,5 +1,5 @@
 ## About   
-Download.exe is a batch download program based on wget, `get_nodup_tv_url.exe` used to obtain unduplicated direct http url,`get_try_tv_url.exe` can used to predict bcz's tv url.    
+`Download.exe` is a batch download program based on wget, `get_nodup_word_tv_url.exe` used to obtain unduplicated direct http url,`get_try_tv_url_ex_word.exe` can used to predict bcz's tv url. `get_url_ex_url.exe` to get unduplicated url from more than one text file. `get_nodup_word_list.exe` to get unduplicated word from more than one text file.  
 ## Main feature  
 This program will download all resource file from an text file on the basis of what pattern of url line the text file contain.This program only used to technical communication, so don't used in any illegal field.    
 
@@ -20,7 +20,7 @@ your downloaded file stored will be `hold on_test.dat`
 
 2.Run command line `Download.exe test1.txt` start download, when the download has completed, you will find a directory named of `word_test`, which contain all of file you need.  
 
-3.Run command line `get_nodup_tv_url.exe file1.txt file2.txt` to get unduplicated url to a file named `Nodup_tv.txt`,eg:  
+3.Run command line `get_nodup_word_tv_url.exe file1.txt file2.txt` to get unduplicated url to a file named `Nodup_tv.txt`,eg:  
 >file1.txt
 
 ```
@@ -47,7 +47,7 @@ aerial	/word_tv/news_play_video_871.mp4
 ```
 Then maybe you would like to run command line `Download.exe -d Total_tv.txt to download directly`
 
-4.Run command line `get_try_tv_url.exe word_list.txt exclude.txt` to get a predicted text file named of `Try_tv.txt`, which contain a list of word in word_list.txt and its tv url, but exclude the words in exclude.txt, the exclude.txt is an optional arrgument.eg:  
+4.Run command line `get_try_tv_url_ex_word.exe word_list.txt exclude.txt` to get a predicted text file named of `Try_tv.txt`, which contain a list of word in word_list.txt and its tv url, but exclude the words in exclude.txt, the exclude.txt is an optional arrgument.eg:  
 >word_list.txt
 
 ```
@@ -61,7 +61,7 @@ accommodate	/word_tv/news_play_video_1937.mp4
 abundance   /word_tv/real_abundance.mp4
 accord
 ```
-Run command line `get_try_tv_url.exe word_list.txt`,you will get  
+Run command line `get_try_tv_url_ex_word.exe word_list.txt`,you will get  
 >Try_tv.txt
 
 ```
@@ -77,7 +77,7 @@ abundance	http://baicizhan.qiniucdn.com/word_tv/noun_abundance.mp4
 abundance	http://baicizhan.qiniucdn.com/word_tv/abundance.mp4
 accommodate	http://baicizhan.qiniucdn.com/word_tv/news_play_video_1937.mp4
 ```
-Run command line `get_try_tv_url.exe word_list.txt ex.txt`,you will get  
+Run command line `get_try_tv_url_ex_word.exe word_list.txt ex.txt`,you will get  
 >Try_tv.txt
 
 ```
@@ -89,6 +89,27 @@ abide	http://baicizhan.qiniucdn.com/word_tv/abide.mp4
 accommodate	http://baicizhan.qiniucdn.com/word_tv/news_play_video_1937.mp4
 ```
 
+5.Run command line `get_url_ex_url.exe word_list.txt exclude.txt` to get a text file named of `Ex_url.txt`, which contain a list of word and it's url in `word_list.txt`, but exclude the url in `exclude.txt`.eg:  
+>word_list.txt 
+
+```
+accommodate	/word_tv/news_play_video_1937.mp4
+abundance   /word_tv/real_abundance.mp4
+accord	/word_tv/real_accord.mp4
+```
+>exclude.txt
+
+```
+abundance   /word_tv/real_abundance.mp4
+```
+>Ex_url.txt
+
+```
+accommodate	http://baicizhan.qiniucdn.com/word_tv/news_play_video_1937.mp4
+accord	http://baicizhan.qiniucdn.com/word_tv/real_accord.mp4
+```
+
+6.Run command line `get_nodup_word_list.exe words_list.txt` to get the unduplicated words `from word_list.txt` and store them in `nodup_words.txt`.  
 
 ## There are some advance feature maybe you need   
 1.Pass a fixed url arrgument followed `-f` to revise your url, default fixed url is `http://baicizhan.qiniucdn.com`, eg:`Download.exe -f http://example.com/test file1.txt file2.txt`  
@@ -126,7 +147,7 @@ Communist	Marx and Engels were two of the first Communists	http://baicizhan.qini
 Earth Hour	Do you want to take part in “Earth Hour this time around?	http://baicizhan.qiniucdn.com/cropped_images/20110326_08_56_17_188.jpg
 ```
 
-7.If you want to auto shutdown your computer when download completed, you need pass `-S` at the end of your command line, eg:`Download.exe file1.txt file2.txt -S`. If you need cancle the pre-set of auto shutdown, you should input `n/N` according to the promote.
+7.If you want to auto shutdown your computer when download completed, you need pass `-S` at your command line, eg:`Download.exe file1.txt file2.txt -S`. If you need cancle the pre-set of auto shutdown, you should input `n/N` according to the promote. If you want to pass another arrgument at the meantime, just pass it, eg:`Download_1.2.exe -dfS http://example.com file1.txt file2.txt`.
 
 8.If you like,you can store your url in text file like this:  
 >test.txt
@@ -137,7 +158,9 @@ windmill	/word_audios_dat/windmill.dat
 http://baicizhan.qiniucdn.com/word_tv/real_egyptian.mp4
 Mr.	Mr. Smith is a stylish man.	/cropped_images/14035_20130608_03_18_32_655.jpg
 ```
-Just run command `Download1.1.exe test.txt`, everything will work well(only supported in version 1.1).  
+Just run command `Download1.1.exe test.txt`, everything will work well(only supported after version 1.1).  
+
+9.If you don't like the Download.exe to rename your file, just pass the arrgument `-n`, eg:`Download.exe -nS file.exe`, only supported after version 1.2.  
 
 ## Feature  
 * **Store file to the directory named of their text file name**

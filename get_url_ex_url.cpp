@@ -1,7 +1,7 @@
 /*
  * Download.cpp
  * Copyright (C) 2015  <@BLUEYI-PC>
-  * predict url from text file but exclude the exclude_list's word and store them in Try_tv.txt
+  * predict url from text file but exclude the exclude_list's url and store them in Ex_url.txt
  * you need pass two argument, first is total word list, second is you need to exclude, but the second is optional
  * Distributed under terms of the MIT license.
  */
@@ -41,15 +41,6 @@ std::string& replace_ex(std::string &str, const std::vector<char> &exclude = exc
     return str;
 }
 
-void show_progress(int cur, int total, std::string cur_file)
-{
-    double rate = static_cast<double>(cur) / static_cast<double>(total);
-    int num_equal = rate * total_bar;
-    std::cout << "***Downloading " << cur_file << "***" << std::endl << std::endl;
-    std::string progress(num_equal, '+');
-    std::cout << "Total:[" << progress << "=>" << cur << "/" << total << "]" << std::endl << std::endl;
-}
-
 int main(int argc, char **argv)
 {
     if (argc < 2) {
@@ -67,22 +58,22 @@ int main(int argc, char **argv)
                 continue;
             }
         }
-            if (!geturl(argv[1], words_url, exclude_list)) {
-                std::cout << "get url failure from file: " << argv[1] << std::endl;
+        if (!geturl(argv[1], words_url, exclude_list)) {
+            std::cout << "get url failure from file: " << argv[1] << std::endl;
+        }
+        std::string try_tv_name = "Ex_url.txt";
+        std::ofstream outwords(try_tv_name.c_str(), std::ofstream::out | std::ofstream::app);
+        for (const auto &fword : words_url) {
+            if (fword.second.first.empty()) {
+                std::cout << fword.first << ": " << fword.second.second << std::endl;
+                outwords << fword.first << "\t" << fword.second.second << std::endl;
             }
-            std::string try_tv_name = "Try_tv.txt";
-            std::ofstream outwords(try_tv_name.c_str(), std::ofstream::out | std::ofstream::app);
-            for (const auto &fword : words_url) {
-                if (fword.second.first.empty()) {
-                    std::cout << fword.first << ": " << fword.second.second << std::endl;
-                    outwords << fword.first << "\t" << fword.second.second << std::endl;
-                }
-                else {
-                    std::cout << fword.first << ": " << fword.second.first << " " << fword.second.second << std::endl;
-                    outwords << fword.first << "\t" << fword.second.first << "\t" << fword.second.second << std::endl;
-                }
+            else {
+                std::cout << fword.first << ": " << fword.second.first << " " << fword.second.second << std::endl;
+                outwords << fword.first << "\t" << fword.second.first << "\t" << fword.second.second << std::endl;
             }
-            outwords.close();
+        }
+        outwords.close();
     }
     return 0;
 }
@@ -124,8 +115,8 @@ bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std:
                 else
                   sentence = line.substr(line.find("\t") + 1, line.rfind("\t") - line.find("\t") - 1);
             }
-
             replace_ex(sentence);
+
             if (line.find("\t") != std::string::npos)
               sub_url = line.substr(line.rfind("\t") + 1);
             //std::cout << "***word:" << word << "***sentence:" << sentence << "***sub_url:" << sub_url << std::endl;
@@ -133,25 +124,15 @@ bool geturl(const std::string &infile, std::multimap<std::string, std::pair<std:
             if (!previous_url.empty() && sub_url == previous_url)
               continue;
             previous_url = sub_url;
-            if (word.empty())
+            if (word.empty() || sub_url.empty())
               continue;
-            std::string lower_word = word;
-            transform(lower_word.begin(), lower_word.end(), lower_word.begin(), ::tolower);
-            if (sub_url.empty() && exclude_list.find(word) == exclude_list.end()) {
-                for (const auto &str : try_str) {
-                    sub_url = fixed_url + "/word_tv/" + str + "_" + lower_word + ".mp4";
-                    words_url.insert(std::make_pair(word, std::make_pair(sentence, sub_url)));
-                }
-                sub_url = fixed_url + "/word_tv/" + lower_word + ".mp4";
-                words_url.insert(std::make_pair(word, std::make_pair(sentence, sub_url)));
-            }
-            else {
-                if (sub_url.find("http://") != std::string::npos)
-                  sub_url = fixed_url + sub_url;
-                //std::cout << "****sub_url: " << sub_url << std::endl;
-                if (exclude_list.find(word) == exclude_list.end())
-                  words_url.insert(std::make_pair(word, std::make_pair(sentence, sub_url)));
-            }
+            if (sub_url.find("http://") == std::string::npos)
+              sub_url = fixed_url + sub_url;
+
+            //std::cout << "---" << sub_url << "---"  << std::endl;
+            //system("pause");
+            if (exclude_list.find(sub_url) == exclude_list.end())
+              words_url.insert(std::make_pair(word, std::make_pair(sentence, sub_url)));
         }
     }
     instream.close();
@@ -170,15 +151,16 @@ bool get_exclude(const std::string &infile, std::set<std::string> &exclude_list)
         while (getline(instream, line)) {
             if (line.length() < line_length)
               continue;
-            std::string word;
+            std::string url;
             if (line.find("\t") != std::string::npos)
-              word = line.substr(0, line.find("\t"));
+              url = line.substr(line.rfind("\t") + 1);
             else if (line.find(" ") != std::string::npos)
-              word = line.substr(0, line.find(" "));
+              url = line.substr(line.find(" ") + 1);
             else
-              word = line;
-            replace_ex(word);
-            exclude_list.insert(word);
+              url = line;
+            //std::cout << "****" << url << "****"  << std::endl;
+            //system("pause");
+            exclude_list.insert(url);
         }
     }
     instream.close();
