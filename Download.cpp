@@ -16,7 +16,7 @@
 #include <utility>
 
 const std::string::size_type line_length = 5;
-const int total_bar = 80;
+const int total_bar = 65;
 const std::vector<char> exclude_char{'*', '\?', '\"', '\\', '/', '|', ':', '<', '>'};
 
 std::string fixed_url = "http://baicizhan.qiniucdn.com";
