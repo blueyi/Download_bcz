@@ -1,5 +1,5 @@
 ## About   
-`Download.exe` is a batch download program based on wget, `get_nodup_word_tv_url.exe` used to obtain unduplicated direct http url,`get_try_tv_url_ex_word.exe` can used to predict bcz's tv url. `get_url_ex_url.exe` to get unduplicated url from more than one text file. `get_nodup_word_list.exe` to get unduplicated word from more than one text file.`Rename.exe` used to rename downloaded file to original file name.`Copy_words.exe` used to copy file from a source directory,the file name specified by a text file,the destination directory will be named `words_list`.
+`Download.exe` is a batch download program based on wget, `get_nodup_word_tv_url.exe` used to obtain unduplicated direct http url,`get_try_tv_url_ex_word.exe` can used to predict bcz's tv url. `get_url_ex_url.exe` to get unduplicated url from more than one text file. `get_nodup_word_list.exe` to get unduplicated word from more than one text file.`Rename.exe` used to rename downloaded file name to original file name.`Copy_words.exe` used to copy file from a source directory,the file name specified by a text file,the destination directory will be named `words_list`.
 
 ## Main feature  
 This program will download all resource file from an text file on the basis of what pattern of url line the text file contain.This program only used to technical communication, so don't used in any illegal field.    
@@ -112,7 +112,25 @@ accord	http://baicizhan.qiniucdn.com/word_tv/real_accord.mp4
 
 6.Run command line `get_nodup_word_list.exe words_list.txt` to get the unduplicated words `from word_list.txt` and store them in `nodup_words.txt`.  
 
-7.Run command line `Rename.exe words_url.txt` in your download directory.
+7.Run command line `Rename.exe words_url.txt` in your downloaded directory.eg:  
+>words_url.txt
+abandon	http://baicizhan.qiniucdn.com/word_tv/news_play_video_664.mp4
+abbreviate	http://baicizhan.qiniucdn.com/word_tv/abbreviate.mp4
+ability	http://baicizhan.qiniucdn.com/word_tv/news_play_video_734.mp4
+abnormal	http://baicizhan.qiniucdn.com/word_tv/real_abnormal.mp4
+>original downloaded file name maybe like this:  
+abandon_tv.mp4	
+abbreviate_tv.mp4
+ability_tv.mp4
+abnormal_tv.mp4
+
+then your downloaded file name while be renamed to 
+>like this:
+abandon_tv.mp4	
+abbreviate.mp4
+ability_tv.mp4
+real_abnormal.mp4
+
 
 8.Run command line `Copy_words.exe words_list.txt source_dir` to copy file from source directory named of `source_dir`,the file name specified by the text file named of `words_list.txt`.of course the file name and directory name will be anything you like.The destination directory will be named `words_list`.eg:  
 >words_list.txt
